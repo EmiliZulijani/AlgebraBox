@@ -1,3 +1,4 @@
+
 # Algebra BOX
 
 [![Build Status](https://travis-ci.org/tkescec/AlgebraBox.svg?branch=master)](https://travis-ci.org/tkescec/AlgebraBox)
@@ -43,3 +44,5 @@ After you start server type http://localhost:8000 to your browser
 ## License
 
 Algebra BOX is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
+
+## Author Emili
