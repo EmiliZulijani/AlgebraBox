@@ -83,7 +83,7 @@ return [
 
             'driver' => 'mysql',
             'host' => env('DB_TEST_HOST', 'localhost'),
-            'database' => env('DB_TEST_DATABASE', 'algebra_test'),
+            'database' => env('DB_TEST_DATABASE', 'algebra_box'),
             'username' => env('DB_TEST_USERNAME', 'root'),
             'password' => env('DB_TEST_PASSWORD', ''),
             'charset' => 'utf8',

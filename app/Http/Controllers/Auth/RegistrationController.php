@@ -44,6 +44,7 @@ class RegistrationController extends Controller
      */
     protected function postRegister(Request $request)
     {
+		
         // Validate the form data
         $result = $this->validate($request, [
             'email' => 'required|email|max:255|unique:users',
@@ -87,8 +88,8 @@ class RegistrationController extends Controller
 
         // Return the appropriate response
         return $result->dispatch(route('auth.login.form'));
-    }
 
+    }
     /**
      * Activate a user if they have provided the correct code
      * @param  string $code
