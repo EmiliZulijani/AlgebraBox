@@ -10,6 +10,9 @@ use App\Http\Requests;
 use Centaur\AuthManager;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Hash;
+use App\Models\UsersRoot;
 
 class RegistrationController extends Controller
 {
@@ -79,7 +82,25 @@ class RegistrationController extends Controller
                     ->subject('Your account has been created');
             }
         );
+		
+		//Create user root folder in storage
 
+		$directory = md5(uniqid());
+		$existsDir = Storage::disk('local')->allDirectories();
+		
+		if(!in_array('public/'.$directory, $existsDir)){
+		Storage::makeDirectory('public/'.$directory);
+		$root = new UsersRoot();
+		
+		$root->user_id = $result->user->id;
+		$root->name = $directory;
+		$root->save();
+		
+		} else {
+			//$message = 'Mapa postoji.';
+			//Session::flash('error', $message);
+		}
+			
         // Ask the user to check their email for the activation link
         $result->setMessage('Registration complete.  Please check your email for activation instructions.');
 
