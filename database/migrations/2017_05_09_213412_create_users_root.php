@@ -15,13 +15,12 @@ class CreateUsersRoot extends Migration
     {
         Schema::create('users_root', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name');
-			$table->integer('user_id')->unsigned();
+			$table->string('name');
+            $table->integer('user_id')->unsigned();           			
             $table->timestamps();
 			
-            $table->engine = 'InnoDB';
-            $table->index('user_id');			
-			
+			$table->engine = 'InnoDB';
+            $table->index('user_id');
         });
     }
 
