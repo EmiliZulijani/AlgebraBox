@@ -41,6 +41,7 @@ class HomeController extends Controller
 		
 		
 	    if (!empty($file = str_replace('public/'.$dir.'/', '', $existsDir))){
+
 	
 		return view('user.home', ['files' => $file]);
 		
@@ -58,7 +59,7 @@ class HomeController extends Controller
      */
 	 
 	 
-	 public function create()
+	 public function create(Request $request)
 	 {
 		 return view('user.create');
 	 }
