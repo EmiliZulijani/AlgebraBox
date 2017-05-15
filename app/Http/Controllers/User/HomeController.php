@@ -55,6 +55,12 @@ class HomeController extends Controller
 		return redirect()->route('home');
 	}
 
+	
+	public function show($name)
+	{
+		print_r($name);
+	}
+	
 	private function setRoot()
 	{
 		$this->user_id = Sentinel::getUser()->id;

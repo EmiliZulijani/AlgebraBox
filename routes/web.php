@@ -19,7 +19,7 @@ Route::group(['prefix' => 'home'], function () {
 	// Home page
 	Route::get('/', ['as' => 'home', 'uses' => 'User\HomeController@index']);
 	// Directories page
-	Route::get('/{name}', ['as' => 'home.directories', 'uses' => 'User\HomeController@index']);
+	Route::get('/{name}', ['as' => 'home.directories', 'uses' => 'User\HomeController@show']);
 	// Create new directory
 	Route::post('/', ['as' => 'directory.create', 'uses' => 'User\HomeController@create']);
 });
