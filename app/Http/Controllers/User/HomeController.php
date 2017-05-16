@@ -34,6 +34,8 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+	 
+	 
     public function index()
     {
 		$this->setRoot();
@@ -59,32 +61,40 @@ class HomeController extends Controller
 	 
 	public function create(Request $request)
 	{
-		$this->setRoot();
-		
+		$this->setRoot();	
 		$dir_name = trim($request->get('dir_name'));
-
         if(!empty($dir_name)) {
 			Storage::disk('public')->makeDirectory($this->root_name.'/'.$dir_name);
-			Session()->flash ('success', "You have successfully created a folder");
+			session()->flash ('success', "You have successfully created a folder {$dir_name}");
 		}
 		
 		return redirect()->route('home');
 	}
+
 	 
 	 
 	 	public function delete($name)
     {
        
-	   $this->setRoot();
+		$this->setRoot();
 	   
 		Storage::disk('public')->deleteDirectory($this->root_name.'/'.$name);
-		Session()->flash ('success', "You have successfully deleted a folder");
+		session()->flash ('success', "You have successfully deleted a folder {$name}");
 		return redirect()->route('home');	
 	}
 	 
 	 
 	 	public function show($name, $name1=null)
 	
+
+	/*
+	public function show($name, $name1=null)
+	{
+		print_r($name);
+	}
+	*/
+	
+	private function setRoot()
 	{
 		if ($name1){
 		$bc=array($name, $name1);
@@ -107,12 +117,13 @@ class HomeController extends Controller
 		$root = UsersRoot::where('user_id', $this->user_id)->first();
 		if($root) {
 			$this->root_name = $root->name;
-		}
+		}else {
+			session()->flash('error', 'Cannot find user root directory');
 	}
 	
-	
+	}
 
-
+}
 	
 
 	
@@ -126,17 +137,10 @@ class HomeController extends Controller
      *
      * @param  string  $hash
      * @return \Illuminate\Http\Response
-	 
-
-
+	
 
 	*/
 	
-	
-	
-}
-
-
 
 ########### MOJI PRIMJERI ###########
 /*
