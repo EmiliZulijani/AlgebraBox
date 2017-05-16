@@ -3,10 +3,18 @@
 @section('title', 'AlgebraBox | The greatest cloud storage')
 
 @section('content')
-
+@php
+	print_r($bc);
+@endphp	
+	
 <div class="row">
   <ol class="breadcrumb">
-    <a href="{{'/'}}" class="active" role="button">Home</a>
+    <li><a href="{{'/'}}">Home</a></li>
+	@foreach ($bc as $value)
+	<li><a href="{{route('home.directories', $value)}}"> {{$value}}</a></li>
+	
+	@endforeach
+	
   </ol>
 </div>
 <div class="row">
@@ -24,11 +32,15 @@
 			</tr>
 			@if($directories)
 				@foreach($directories as $directory)
+			@php
+				$dir_array = explode('/', $directory);
+				print_r($dir_array);	
+			@endphp
 				<tr>
 					<td>
-						<a href="{{ route('home.directories', str_replace('/', '', strstr($directory, '/'))) }}"><b>
+						<a href="{{ route('home.directory.directories', ['name' =>dir_array[1], 'name1'=>end($dir_array)]) }}"><b>
 						<span class="glyphicon glyphicon-folder-close" aria-hidden="true"></span> &nbsp; 
-						{{ ucfirst(str_replace('/', '', strstr($directory, '/'))) }}</b></a>			
+						{{ ucfirst(end($dir_array)) }}</b></a>			
 					</td>
 						<td> 						
 							<a href="{{route('directory.delete', str_replace('/', '', strstr($directory, '/')))}}" data-method="delete" data-token="{{csrf_token()}}" role="button" class="btn-btn-danger btn-sm">

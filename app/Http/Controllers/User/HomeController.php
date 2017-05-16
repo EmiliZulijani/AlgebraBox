@@ -14,11 +14,16 @@ use Sentinel;
 
 class HomeController extends Controller
 {
+	
+	private $user_id;
+	private $root_name = false;
+	
   /**
    * Set middleware to quard controller.
    *
    * @return void
    */
+   
     public function __construct()
     {
         $this->middleware('sentinel.auth');
@@ -29,6 +34,112 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function index()
+    {
+		$this->setRoot();
+		
+		
+		if($this->root_name) {
+			$allDir = Storage::disk('public')->directories($this->root_name);
+			$files = Storage::disk('public')->files($this->root_name);
+			
+			return view('user.home', ['directories' => $allDir, 'files' => $files]);
+		}
+		
+		return view('user.home',['directories' => false, 'files' => false]);
+		
+	}
+	
+	  /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+	 
+	 
+	public function create(Request $request)
+	{
+		$this->setRoot();
+		
+		$dir_name = trim($request->get('dir_name'));
+
+        if(!empty($dir_name)) {
+			Storage::disk('public')->makeDirectory($this->root_name.'/'.$dir_name);
+			Session()->flash ('success', "You have successfully created a folder");
+		}
+		
+		return redirect()->route('home');
+	}
+	 
+	 
+	 	public function delete($name)
+    {
+       
+	   $this->setRoot();
+	   
+		Storage::disk('public')->deleteDirectory($this->root_name.'/'.$name);
+		Session()->flash ('success', "You have successfully deleted a folder");
+		return redirect()->route('home');	
+	}
+	 
+	 
+	 	public function show($name, $name1=null)
+	
+	{
+		if ($name1){
+		$bc=array($name, $name1);
+		}
+		$bc=array($name);
+		$this->setRoot();
+		$path =$this->root_name.'/'.$name;
+		$directories=Storage::disk('public')->directories($path);
+		$files = Storage::disk('public')->files($path);
+		
+		return view('user.show',['directories' => $directories, 'files' => $files, $bc ]);
+		
+	}
+	 
+	 
+	 
+	 	private function setRoot()
+	{	
+		$this->user_id = Sentinel::getUser()->id;
+		$root = UsersRoot::where('user_id', $this->user_id)->first();
+		if($root) {
+			$this->root_name = $root->name;
+		}
+	}
+	
+	
+
+
+	
+
+	
+	 /*
+    public function store(Request $request)
+
+	{}
+
+   
+     * Remove the specified role from storage.
+     *
+     * @param  string  $hash
+     * @return \Illuminate\Http\Response
+	 
+
+
+
+	*/
+	
+	
+	
+}
+
+
+
+########### MOJI PRIMJERI ###########
+/*
     public function index()
     {
 		$user = Sentinel::getUser()->id;
@@ -52,40 +163,23 @@ class HomeController extends Controller
 		}
 	}
 	
-	  /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-	 
-	 
-	 public function create(Request $request)
+		 public function create(Request $request)
 	 {
+		 
 		 return view('user.create');
 	 }
 	 
-	 
-	 /*
-    public function store(Request $request)
-    {
-  
-      $path = $request->file('nam')->store('avatars');
-
-       return $path;
-   */
-
-    /**
-     * Remove the specified role from storage.
-     *
-     * @param  string  $hash
-     * @return \Illuminate\Http\Response
-     */
-
-	public function destroy(Request $file)
-    {
-        Storage::delete($file);
 		
-		return view ('user.home');
-
-	}
-}
+			foreach ($directories as $directory){
+			
+			$subDir = Storage::allDirectories($directory);
+			$subFile = Storage::allFiles($directory);
+			
+			return view('user.home', ['directories' => $subDir, 'files' => $subFile]);			
+		}
+			
+		return view('user.home',['directories' => false, 'files' => false]);
+	
+	
+	
+	*/
