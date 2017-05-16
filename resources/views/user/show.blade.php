@@ -3,20 +3,17 @@
 @section('title', 'AlgebraBox | The greatest cloud storage')
 
 @section('content')
-@php
-	print_r($bc);
-@endphp	
+
 	
 <div class="row">
   <ol class="breadcrumb">
-    <li><a href="{{'/'}}">Home</a></li>
-	@foreach ($bc as $value)
-	<li><a href="{{route('home.directories', $value)}}"> {{$value}}</a></li>
-	
-	@endforeach
-	
+    <li class="breadcrumb-item active"><a href="{{'/'}}">Home</a></li>
+		@foreach ($bc as $value)
+			<li><a href="{{route('home.directories', $value)}}"> {{$value}}</a></li>
+		@endforeach
   </ol>
 </div>
+
 <div class="row">
 	<div class="col-md-3">
 		<div class="list-group">
@@ -32,13 +29,12 @@
 			</tr>
 			@if($directories)
 				@foreach($directories as $directory)
-			@php
-				$dir_array = explode('/', $directory);
-				print_r($dir_array);	
-			@endphp
+				@php
+					$dir_array = explode('/', $directory);
+				@endphp
 				<tr>
 					<td>
-						<a href="{{ route('home.directory.directories', ['name' =>dir_array[1], 'name1'=>end($dir_array)]) }}"><b>
+						<a href="{{ route('home.directory.directories', ['name' => $dir_array[1],'name1'=>end($dir_array)]) }}"><b>
 						<span class="glyphicon glyphicon-folder-close" aria-hidden="true"></span> &nbsp; 
 						{{ ucfirst(end($dir_array)) }}</b></a>			
 					</td>
@@ -48,18 +44,24 @@
 							</a>
 						</td>
 					</tr>
-				</tr>
 				@endforeach
 			@endif
 			@if($files)
 				@foreach($files as $file)
+				@php
+					$dir_array = explode('/', $file);
+				@endphp
 				<tr>
 					<td>
-						<a href="#">
-						<span class="glyphicon glyphicon-file" aria-hidden="true"></span> &nbsp; 
-						{{ ucfirst(str_replace('/', '', strstr($file, '/'))) }}</a>
+						<a href="{{ route('home.directory.directories', ['name' => $dir_array[1], 'name1'=>end($dir_array)]) }}"><b>
+						<span class="glyphicon glyphicon-folder-close" aria-hidden="true"></span> &nbsp; 
+						{{ ucfirst(end($dir_array)) }}</b></a>	
 					</td>
-					<td></td>
+					<td>
+						<a href="{{route('directory.delete', str_replace('/', '', strstr($file, '/')))}}" data-method="delete" data-token="{{csrf_token()}}" role="button" class="btn-btn-danger btn-sm">
+						<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+						</a>
+					</td>	
 				</tr>
 				@endforeach
 			@endif

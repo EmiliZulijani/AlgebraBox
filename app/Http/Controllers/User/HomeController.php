@@ -65,52 +65,45 @@ class HomeController extends Controller
 		$dir_name = trim($request->get('dir_name'));
         if(!empty($dir_name)) {
 			Storage::disk('public')->makeDirectory($this->root_name.'/'.$dir_name);
-			session()->flash ('success', "You have successfully created a folder {$dir_name}");
+			session()->flash ('success', "You have successfully created new folder {$dir_name}");
 		}
 		
 		return redirect()->route('home');
 	}
 
-	 
-	 
+	
+	public function show($name, $name1=null, $name2=null)
+	{
+		if ($name2){{
+		$bc=array($name, $name1, $name2);
+		}
+		if ($name1){
+		$bc=array($name, $name1);
+		}}
+		$bc=array($name);
+		
+        $this->setRoot(); 
+		
+        $path = $this->root_name.'/'.$name;
+        $directories = Storage::disk('public')->directories($path);
+        $files = Storage::disk('public')->files($path);
+        return view('user.show',['directories' => $directories, 'files' => $files, 'bc' => $bc]);
+	}
+ 
+  
 	 	public function delete($name)
     {
        
 		$this->setRoot();
 	   
 		Storage::disk('public')->deleteDirectory($this->root_name.'/'.$name);
-		session()->flash ('success', "You have successfully deleted a folder {$name}");
+		Storage::disk('public')->delete($this->root_name.'/'.$name);
+		session()->flash ('success', "You have successfully deleted folder {$name}");
 		return redirect()->route('home');	
 	}
-	 
-	 
-	 	public function show($name, $name1=null)
+	 	
 	
 
-	/*
-	public function show($name, $name1=null)
-	{
-		print_r($name);
-	}
-	*/
-	
-	private function setRoot()
-	{
-		if ($name1){
-		$bc=array($name, $name1);
-		}
-		$bc=array($name);
-		$this->setRoot();
-		$path =$this->root_name.'/'.$name;
-		$directories=Storage::disk('public')->directories($path);
-		$files = Storage::disk('public')->files($path);
-		
-		return view('user.show',['directories' => $directories, 'files' => $files, $bc ]);
-		
-	}
-	 
-	 
-	 
 	 	private function setRoot()
 	{	
 		$this->user_id = Sentinel::getUser()->id;
@@ -119,7 +112,7 @@ class HomeController extends Controller
 			$this->root_name = $root->name;
 		}else {
 			session()->flash('error', 'Cannot find user root directory');
-	}
+		}
 	
 	}
 
@@ -127,19 +120,6 @@ class HomeController extends Controller
 	
 
 	
-	 /*
-    public function store(Request $request)
-
-	{}
-
-   
-     * Remove the specified role from storage.
-     *
-     * @param  string  $hash
-     * @return \Illuminate\Http\Response
-	
-
-	*/
 	
 
 ########### MOJI PRIMJERI ###########
