@@ -59,36 +59,56 @@ class HomeController extends Controller
      */
 	 
 	 
-	public function create(Request $request)
+	public function create(Request $request, $sublevels=null)
 	{
-		$this->setRoot();	
+		$this->setRoot();
 		$dir_name = trim($request->get('dir_name'));
-        if(!empty($dir_name)) {
-			Storage::disk('public')->makeDirectory($this->root_name.'/'.$dir_name);
-			session()->flash ('success', "You have successfully created new folder {$dir_name}");
-		}
 		
-		return redirect()->route('home');
+	   
+	   if (!empty($sublevels)) {
+            $sublevels = explode('/', $sublevels);
+			
+        $uri = '';
+            foreach ($sublevels as $sublevel) {
+                $uri .= $sublevel.'/';
+            };
+        }else {
+            $uri = null;
+        }	
+		
+        if(!empty($dir_name && !$uri)) {
+			Storage::disk('public')->makeDirectory($this->root_name.'/'.$dir_name);
+            session()->flash('success', 'You have successfully created a new folder');
+            return redirect()->route('home');
+		} else{
+		    Storage::disk('public')->makeDirectory($this->root_name.'/'.$uri.'/'.$dir_name);
+            session()->flash('success', 'You have successfully created a new folder');
+            return redirect()->back();
+		}
 	}
 
 	
-	public function show($name, $name1=null, $name2=null)
+	public function show($name, $sublevels=null)
 	{
-		if ($name2){{
-		$bc=array($name, $name1, $name2);
-		}
-		if ($name1){
-		$bc=array($name, $name1);
-		}}
-		$bc=array($name);
-		
-        $this->setRoot(); 
-		
-        $path = $this->root_name.'/'.$name;
+		$this->setRoot();
+        if (!empty($sublevels)) {
+            $sublevels = explode('/', $sublevels);
+        $uri = '';
+            foreach ($sublevels as $sublevel) {
+                $uri .= $sublevel.'/';
+            }
+        $bc = $sublevels;
+        array_unshift($bc, $name);
+        }else {
+            $uri = null;
+            $bc = array($name);
+        }
+        $path = $this->root_name.'/'.$name.'/'.$uri;
         $directories = Storage::disk('public')->directories($path);
         $files = Storage::disk('public')->files($path);
         return view('user.show',['directories' => $directories, 'files' => $files, 'bc' => $bc]);
-	}
+    }
+
  
   
 	 	public function delete($name)
@@ -102,6 +122,24 @@ class HomeController extends Controller
 		return redirect()->route('home');	
 	}
 	 	
+	public function upload (Request $request)
+	{
+		$this->setRoot();
+		
+		if ($request->file()){
+			
+			foreach ($request->file() as $files){
+				foreach($files as $file){
+					$file->storeAs('public/'.$this->root_name, $file->getClientOriginalName());
+				}
+			}
+		session()->flash ('success', "You have successfully upload file");
+		return redirect()->route('home');
+		
+		}
+		
+	}
+	
 	
 
 	 	private function setRoot()

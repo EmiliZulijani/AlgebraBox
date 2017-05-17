@@ -4,16 +4,34 @@
 
 @section('content')
 
-	
 <div class="row">
   <ol class="breadcrumb">
-    <li class="breadcrumb-item active"><a href="{{'/'}}">Home</a></li>
-		@foreach ($bc as $value)
-			<li><a href="{{route('home.directories', $value)}}"> {{$value}}</a></li>
-		@endforeach
+    <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
+        @php
+        $pathCreate = '';
+		$pathCreate1 = '';
+        if($bc){
+            $count = count($bc);
+            for ($i=0; $i < $count ; $i++) {
+                $pathCreate .= $bc[$i].'/';
+            }
+            for ($i=0; $i < $count-1 ; ++$i) {
+				$pathCreate1 .= $bc[$i].'/';	
+        @endphp
+		
+                <li class="breadcrumb-item"><a href="{{ route('home.directories', $pathCreate1) }}">{{  $pathCreate1 }}</a></li>
+
+        @php
+            }
+        @endphp
+		
+            <li class="breadcrumb-item active">{{ $bc ? end($bc) : '' }}</li>
+        @php
+        }
+        @endphp
+
   </ol>
 </div>
-
 <div class="row">
 	<div class="col-md-3">
 		<div class="list-group">
@@ -27,44 +45,54 @@
 				<th>Name</th>
 				<th>Action</th>
 			</tr>
-			@if($directories)
-				@foreach($directories as $directory)
-				@php
-					$dir_array = explode('/', $directory);
-				@endphp
-				<tr>
-					<td>
-						<a href="{{ route('home.directory.directories', ['name' => $dir_array[1],'name1'=>end($dir_array)]) }}"><b>
-						<span class="glyphicon glyphicon-folder-close" aria-hidden="true"></span> &nbsp; 
-						{{ ucfirst(end($dir_array)) }}</b></a>			
-					</td>
-						<td> 						
-							<a href="{{route('directory.delete', str_replace('/', '', strstr($directory, '/')))}}" data-method="delete" data-token="{{csrf_token()}}" role="button" class="btn-btn-danger btn-sm">
-							<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-							</a>
-						</td>
-					</tr>
-				@endforeach
-			@endif
-			@if($files)
-				@foreach($files as $file)
-				@php
-					$dir_array = explode('/', $file);
-				@endphp
-				<tr>
-					<td>
-						<a href="{{ route('home.directory.directories', ['name' => $dir_array[1], 'name1'=>end($dir_array)]) }}"><b>
-						<span class="glyphicon glyphicon-folder-close" aria-hidden="true"></span> &nbsp; 
-						{{ ucfirst(end($dir_array)) }}</b></a>	
-					</td>
-					<td>
+
+            @if ($directories)
+                @foreach ($directories as $directory)
+                @php
+                    $dir_array = explode('/', $directory);
+                    $count = count($dir_array);
+                    $path = '';
+                    for ($i=1; $i < $count ; $i++) {
+                        $path .= $dir_array[$i].'/';
+                    }
+                @endphp
+                <tr>
+                    <td>
+                        <a href="{{ route('home.directories', $path) }}"><b>
+						<span class="glyphicon glyphicon-folder-close" aria-hidden="true"></span> &nbsp;
+						{{ ucfirst(end($dir_array)) }}</b></a>
+                    </td>
+                    <td>
+                        <a href="{{ route('directory.delete', $path) }}" role="button" class="btn btn-danger btn-small action_confirm" data-method="delete" data-token="{{ csrf_token() }}">
+						<span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
+                    </td>
+                </tr>
+                @endforeach
+            @endif
+            @if ($files)
+                @foreach ($files as $file)
+                <tr>
+                    <td>
+                        <a href="#"><span class="glyphicon glyphicon-file" aria-hidden="true"></span> &nbsp;
+                    	{{ ucfirst(str_replace('/', '', strstr($file, '/'))) }}</a>
+                    </td>
+                    <td>
 						<a href="{{route('directory.delete', str_replace('/', '', strstr($file, '/')))}}" data-method="delete" data-token="{{csrf_token()}}" role="button" class="btn-btn-danger btn-sm">
 						<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
 						</a>
-					</td>	
-				</tr>
-				@endforeach
-			@endif
+                    </td>
+                </tr>
+                @endforeach
+            @elseif (!($directories | $files))
+                <tr>
+                    <td>
+                        <span class="align-middle"><b>Prazna mapa!</b></span>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+            @endif
+
 		</table>
 	</div>
 </div>
@@ -73,16 +101,20 @@
 <div class="modal fade" id="createDir" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-		<form method="POST" action="{{ route('directory.create') }}">
+
+		<form method="POST" action="{{ route('directory.directories.create', $pathCreate) }}">
 			{{ csrf_field() }}
 		  <div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-			<h4 class="modal-title" id="myModalLabel">Create New Directory</h4>
+			<h4 class="modal-title" id="myModalLabel">Create New Directory {{ $pathCreate }}</h4>
+
 		  </div>
 		  <div class="modal-body">
 			<div class="form-group {{ ($errors->has('dir_name')) ? 'has-error' : '' }}">
 				<label for="dir_name">Directory name</label>
-				<input type="text" class="form-control" id="dir_name" name="dir_name" placeholder="Enter directory name" required>
+
+				<input type="text" class="form-control" id="dir_name" name="dir_name" placeholder="Enter directory name" required autofocus>
+
 			</div>
 		  </div>
 		  <div class="modal-footer">

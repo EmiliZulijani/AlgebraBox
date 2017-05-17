@@ -13,7 +13,7 @@
 	<div class="col-md-3">
 		<div class="list-group">
 			<a href="#" class="list-group-item list-group-item-info" data-toggle="modal" data-target="#createDir">Create New Directory</a>
-			<a href="#" class="list-group-item list-group-item-info">Upload Files</a>
+			<a href="#" class="list-group-item list-group-item-info" data-toggle="modal" data-target="#upload">Upload Files</a>
 		</div>
 	</div>
 	<div class="col-md-9">
@@ -30,12 +30,10 @@
 						<span class="glyphicon glyphicon-folder-close" aria-hidden="true"></span> &nbsp; 
 						{{ ucfirst(str_replace('/', '', strstr($directory, '/'))) }}</b></a>			
 					</td>
-						<td> 						
-							<a href="{{route('directory.delete', str_replace('/', '', strstr($directory, '/')))}}" data-method="delete" data-token="{{csrf_token()}}" role="button" class="btn-btn-danger btn-sm">
-							<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-							</a>
-						</td>
-					</tr>
+					<td> 						
+						<a href="{{route('directory.delete', str_replace('/', '', strstr($directory, '/')))}}" data-method="delete" data-token="{{csrf_token()}}" role="button" class="btn-btn-danger btn-sm">
+						<span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
+					</td>
 				</tr>
 				@endforeach
 			@endif
@@ -49,8 +47,8 @@
 					</td>
 					<td>							
 						<a href="{{route('directory.delete', str_replace('/', '', strstr($file, '/')))}}" data-method="delete" data-token="{{csrf_token()}}" role="button" class="btn-btn-danger btn-sm">
-						<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-						</a></td>
+						<span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
+					</td>
 				</tr>
 				@endforeach
 			@endif
@@ -82,4 +80,30 @@
     </div>
   </div>
 </div>
+
+<!-- Upload files modal-->
+<div class="modal fade" id="upload" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+		<form method="POST" action="{{ route('files.upload') }}" enctype="multipart/form-data">
+			{{ csrf_field() }}
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title" id="myModalLabel">Upload files</h4>
+		  </div>
+		  <div class="modal-body">
+			<div class="form-group {{ ($errors->has('dir_name')) ? 'has-error' : '' }}">
+				<label for="files">Files</label>
+				<input type="file" id="files" name="files[]" required multiple>
+			</div>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			<button type="submit" class="btn btn-primary">Upload</button>
+		  </div>
+		</form>
+    </div>
+  </div>
+</div>
 @stop
+

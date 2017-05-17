@@ -21,13 +21,19 @@ Route::group(['prefix' => 'home'], function () {
 	// Directories page
 	Route::get('/{name}', ['as' => 'home.directories', 'uses' => 'User\HomeController@index']);
 	Route::get('/{name}', ['as' => 'home.directories', 'uses' => 'User\HomeController@show']);
-	Route::get('/{name}/{name1}', ['as' => 'home.directory.directories', 'uses' => 'User\HomeController@show']);
-	Route::get('/{name}/{name1}/{name2}', ['as' => 'home.directory.directory.directories', 'uses' => 'User\HomeController@show']);
+	Route::get('/{name}/{sublevels?}', ['as' => 'home.directory.directories', 'uses' => 'User\HomeController@show'])->where('sublevels', '.*');
+	//Route::get('/{name}/{name1}', ['as' => 'home.directory.directories', 'uses' => 'User\HomeController@show']);
+	//Route::get('/{name}/{name1}/{name2}', ['as' => 'home.directory.directory.directories', 'uses' => 'User\HomeController@show']);
 	// Create new directory
-	Route::post('/', ['as' => 'directory.create', 'uses' => 'User\HomeController@create']);	
+	Route::post('/', ['as' => 'directory.create', 'uses' => 'User\HomeController@create']);
+	Route::post('/{sublevels?}', ['as' => 'directory.directories.create', 'uses' => 'User\HomeController@create'])->where('sublevels', '.*');	
 	//Delete directory
 	Route::delete('/{name}', ['as' => 'directory.delete', 'uses' => 'User\HomeController@delete']);
-});
+	Route::delete('/{sublevels?}', ['as' => 'directory.directories.delete', 'uses' => 'User\HomeController@delete'])->where('sublevels', '.*');;
+	});
+	
+Route::post('/files/upload', ['as' => 'files.upload', 'uses' => 'User\HomeController@upload']);
+	
 // Authorization
 Route::get('login', ['as' => 'auth.login.form', 'uses' => 'Auth\SessionController@getLogin']);
 Route::post('login', ['as' => 'auth.login.attempt', 'uses' => 'Auth\SessionController@postLogin']);
